@@ -1,0 +1,16 @@
+import express from 'express';
+import { extract } from 'twitter-url-direct';
+const app = express();
+app.get('/api', async (req, res) => {
+  const { url } = req.query;
+  if (!url) return res.status(400).json({ error: 'url param missing' });
+  try {
+    const links = await extract(url);
+    const best = links.sort((a, b) => b.quality - a.quality)[0];
+    res.json({ download_url: best.download, quality: best.quality });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Proxy ready'));
