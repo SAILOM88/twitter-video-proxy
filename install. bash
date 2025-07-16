@@ -1,0 +1,6 @@
+#1) สร้างโปรเจ็กต์
+git clone https://github.com/yashbhardwaj/twitter-video-downloader my-tw-proxy
+cd my-tw-proxy
+npm install             #ติดตั้ง dependences
+
+#2) แก้ไฟล์ index.js ให้สั้นลงดังนี้
