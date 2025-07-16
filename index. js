@@ -1,16 +1,24 @@
+// index.js
 import express from 'express';
-import { extract } from 'twitter-url-direct';
+import { extract } from 'twitter-url-direct';   // npm i twitter-url-direct
 const app = express();
 app.get('/api', async (req, res) => {
   const { url } = req.query;
   if (!url) return res.status(400).json({ error: 'url param missing' });
+
   try {
-    const links = await extract(url);
-    const best = links.sort((a, b) => b.quality - a.quality)[0];
-    res.json({ download_url: best.download, quality: best.quality });
+    const links = await extract(url);  // ดึงลิงก์วิดีโอ
+    if (!links?.length) throw new Error('no video found');
+    const best = links.sort((a, b) => (b.quality || 0) - (a.quality || 0))[0];
+
+    return res.json({
+      download_url: best.download,
+      quality: best.quality,
+      title: best.title,
+    });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: e.message });
   }
 });
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Proxy ready'));
+app.listen(PORT, () => console.log('Proxy ready on', PORT));
